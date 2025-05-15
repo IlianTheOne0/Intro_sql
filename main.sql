@@ -1,9 +1,11 @@
 USE master
-GO
+
+-- Check if the database exists, and drop it if necessary
+IF DB_ID('Hospital') IS NOT NULL
+    DROP DATABASE Hospital
 
 -- Create a new database
 CREATE DATABASE Hospital
-GO
 USE Hospital
 GO
 
@@ -15,11 +17,10 @@ CREATE TABLE Departments
     Financing MONEY NOT NULL DEFAULT(0),
     Name NVARCHAR(100) NOT NULL UNIQUE,
 
-    CONSTRAINT CHK_Building CHECK(Building BETWEEN 1 AND 5),
-    CONSTRAINT CHK_Financing CHECK(Financing >= 0),
-    CONSTRAINT CHK_Name CHECK(Name <> '')
+    CONSTRAINT CHK_Departments_Building CHECK(Building BETWEEN 1 AND 5),
+    CONSTRAINT CHK_Departments_Financing CHECK(Financing >= 0),
+    CONSTRAINT CHK_Departments_Name CHECK(Name <> '')
 )
-GO
 
 -- Create a table with diseases
 CREATE TABLE Diseases
@@ -28,10 +29,9 @@ CREATE TABLE Diseases
     Name NVARCHAR(100) NOT NULL UNIQUE,
     Severity INT NOT NULL DEFAULT(1),
 
-    CONSTRAINT CHK_Name CHECK(Name <> ''),
-    CONSTRAINT CHK_Severity CHECK(Severity >= 1)
+    CONSTRAINT CHK_Diseases_Name CHECK(Name <> ''),
+    CONSTRAINT CHK_Diseases_Severity CHECK(Severity >= 1)
 )
-GO
 
 -- Create a table with doctors
 CREATE TABLE Doctors
@@ -42,11 +42,10 @@ CREATE TABLE Doctors
     Salary MONEY NOT NULL,
     Surname NVARCHAR(MAX) NOT NULL,
 
-    CONSTRAINT CHK_Name CHECK(Name <> ''),
-    CONSTRAINT CHK_Salary CHECK(Salary > 0),
-    CONSTRAINT CHK_Surname CHECK(Surname <> '')
+    CONSTRAINT CHK_Doctors_Name CHECK(Name <> ''),
+    CONSTRAINT CHK_Doctors_Salary CHECK(Salary > 0),
+    CONSTRAINT CHK_Doctors_Surname CHECK(Surname <> '')
 )
-GO
 
 -- Create a table with examinations
 CREATE TABLE Examinations
@@ -57,9 +56,11 @@ CREATE TABLE Examinations
     Name NVARCHAR(100) NOT NULL UNIQUE,
     StartTime TIME NOT NULL,
 
-    CONSTRAINT CHK_DayOfWeek CHECK(DayOfWeek BETWEEN 1 AND 7),
-    CONSTRAINT CHK_EndTime CHECK(EndTime > StartTime),
-    CONSTRAINT CHK_Name CHECK(Name <> ''),
-    CONSTRAINT CHK_StartTime CHECK(CAST(StartTime AS TIME) BETWEEN '08:00' AND '18:00')
+    CONSTRAINT CHK_Examinations_DayOfWeek CHECK(DayOfWeek BETWEEN 1 AND 7),
+    CONSTRAINT CHK_Examinations_EndTime CHECK(EndTime > StartTime),
+    CONSTRAINT CHK_Examinations_Name CHECK(Name <> ''),
+    CONSTRAINT CHK_Examinations_StartTime CHECK(CAST(StartTime AS TIME) BETWEEN '08:00' AND '18:00')
 )
+
+-- Execute the current batch of scripts
 GO
